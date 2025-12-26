@@ -21,15 +21,10 @@ app.use(express.json());
 //     credentials: true,
 //   })
 // );
-
+app.set("trust proxy", 1);
 app.use(
   cors({
-    origin: process.env.CORS_ORIGINS
-      ? process.env.CORS_ORIGINS.split(",")
-      : "*",
-    // credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: process.env.CORS_ORIGINS.split(","),
   })
 );
 
