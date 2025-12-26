@@ -24,25 +24,14 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // allow requests with no origin (Postman, mobile apps)
-      if (!origin) return callback(null, true);
-
-      const allowedOrigins = process.env.CORS_ORIGINS.split(",");
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(",")
+      : "*",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-// 👇 VERY IMPORTANT
-app.options("*", cors());
 
 const db = await connectDB();
 app.locals.db = db;
