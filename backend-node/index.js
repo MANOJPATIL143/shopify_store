@@ -15,12 +15,34 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
+// app.use(
+//   cors({
+//     origin: process.env.CORS_ORIGINS.split(","),
+//     credentials: true,
+//   })
+// );
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGINS.split(","),
+    origin: (origin, callback) => {
+      // allow requests with no origin (Postman, mobile apps)
+      if (!origin) return callback(null, true);
+
+      const allowedOrigins = process.env.CORS_ORIGINS.split(",");
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// 👇 VERY IMPORTANT
+app.options("*", cors());
 
 const db = await connectDB();
 app.locals.db = db;
